@@ -7,6 +7,7 @@ import java.io.InputStream;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
@@ -68,7 +69,7 @@ public class GridFsController {
 	
 	
 	  @GetMapping("/save/{username}") 
-	  public ResponseEntity<byte[]> retrieveImageFile(@PathVariable String username) throws IOException {
+	  public ResponseEntity retrieveImageFile(@PathVariable String username) throws IOException {
 		/*
 		 * GridFSDBFile dbFile = gridFsOperations.findOne(new
 		 * Query(Criteria.where("_id").is("5cd3c37b3ff9da403c2f01b3")));
@@ -76,7 +77,9 @@ public class GridFsController {
 		  GridFSDBFile dbFile = gridFsOperations.findOne(new
 				  Query(Criteria.where("metadata.userName").is(username)));
 	  System.out.println(dbFile.toString());
-	  return new ResponseEntity<byte[]>(IOUtils.toByteArray(dbFile.getInputStream()), HttpStatus.OK);
+	  InputStreamResource inputStreamResource = new InputStreamResource(dbFile.getInputStream());
+	  //byte[] b = IOUtils.toByteArray(dbFile.getInputStream());
+	  return new ResponseEntity(inputStreamResource, HttpStatus.OK);
 	  
 	  }
 	 
