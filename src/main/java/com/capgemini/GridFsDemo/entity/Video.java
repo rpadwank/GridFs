@@ -3,33 +3,25 @@ package com.capgemini.GridFsDemo.entity;
 import java.io.File;
 
 public class Video {
-	private String filePath;
+	private File filePath;
 	private String description;
 	private String fileName;
 	private String userName;
-	private File fp;
 	public Video() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Video(String filePath, String description, String fileName, String userName, File fp) {
+	public Video(File filePath, String description, String fileName, String userName) {
 		super();
 		this.filePath = filePath;
 		this.description = description;
 		this.fileName = fileName;
 		this.userName = userName;
-		this.fp = fp;
 	}
-	public File getFp() {
-		return fp;
-	}
-	public void setFp(File fp) {
-		this.fp = fp;
-	}
-	public String getFilePath() {
+	public File getFilePath() {
 		return filePath;
 	}
-	public void setFilePath(String filePath) {
+	public void setFilePath(File filePath) {
 		this.filePath = filePath;
 	}
 	public String getDescription() {
@@ -50,6 +42,7 @@ public class Video {
 	public void setUserName(String userName) {
 		this.userName = userName;
 	}
+	
 	
 	
 	
