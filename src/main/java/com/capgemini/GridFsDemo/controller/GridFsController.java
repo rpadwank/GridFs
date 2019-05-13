@@ -4,9 +4,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -58,29 +61,43 @@ public class GridFsController {
 		//System.out.println("fp:"+video.getFp());
 		
 		  InputStream inputStream = file.getInputStream();
-		  metaData.put("type", "image");
+		  metaData.put("type", "video");
 		 
 		
 		//store image file to mongodb
-		fileId = gridFsOperations.store(inputStream, file.getOriginalFilename(), "image/png", metaData).getId().toString();
+		fileId = gridFsOperations.store(inputStream, file.getOriginalFilename(), metaData).getId().toString();
 		//return null;
 		return new ResponseEntity<Video>(HttpStatus.OK);
 	}
 	
 	
 	  @GetMapping("/save/{username}") 
-	  public ResponseEntity retrieveImageFile(@PathVariable String username) throws IOException {
+	  public ResponseEntity retrieveSingleVideoFileUsingUsername(@PathVariable String username) throws IOException {
 		/*
 		 * GridFSDBFile dbFile = gridFsOperations.findOne(new
 		 * Query(Criteria.where("_id").is("5cd3c37b3ff9da403c2f01b3")));
 		 */
 		  GridFSDBFile dbFile = gridFsOperations.findOne(new
 				  Query(Criteria.where("metadata.userName").is(username)));
-	  System.out.println(dbFile.toString());
 	  InputStreamResource inputStreamResource = new InputStreamResource(dbFile.getInputStream());
 	  //byte[] b = IOUtils.toByteArray(dbFile.getInputStream());
 	  return new ResponseEntity(inputStreamResource, HttpStatus.OK);
 	  
+	  }
+	  
+	  @GetMapping("/save")
+	  public ResponseEntity<List<byte[]>> retrieveVideoFileForHomepage() throws IOException {
+		  List<GridFSDBFile> dbFileList = gridFsOperations.find(null);
+		  //List<InputStreamResource> inputStreamResources = new ArrayList<InputStreamResource>();
+		  List<byte[]> byteFiles = new ArrayList<byte[]>();
+		  for(GridFSDBFile dbFL: dbFileList )
+		  {
+			  byteFiles.add(IOUtils.toByteArray(dbFL.getInputStream()));
+			  //inputStreamResources.add(new InputStreamResource((dbFL.getInputStream())));
+		  }
+		  for(int i=0;i<byteFiles.size();i++)
+			  System.out.println(byteFiles.get(i));
+		  return new ResponseEntity<List<byte[]>>(byteFiles, HttpStatus.OK);
 	  }
 	 
 }
