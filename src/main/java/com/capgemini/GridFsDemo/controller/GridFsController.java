@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.capgemini.GridFsDemo.entity.FileResource;
 import com.capgemini.GridFsDemo.entity.Video;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -81,23 +82,38 @@ public class GridFsController {
 				  Query(Criteria.where("metadata.userName").is(username)));
 	  InputStreamResource inputStreamResource = new InputStreamResource(dbFile.getInputStream());
 	  //byte[] b = IOUtils.toByteArray(dbFile.getInputStream());
+	  System.out.println(inputStreamResource);
 	  return new ResponseEntity(inputStreamResource, HttpStatus.OK);
 	  
 	  }
 	  
+	  @GetMapping("/retrieve/{id}")
+	  public ResponseEntity retrieveVideoUsingId(@PathVariable String id) {
+		  GridFSDBFile dbFile = gridFsOperations.findOne(new
+				  Query(Criteria.where("_id").is(id)));
+		  InputStreamResource inputStreamResource = new InputStreamResource(dbFile.getInputStream());
+		  return new ResponseEntity(inputStreamResource, HttpStatus.OK);
+		  
+	  }
+	  
 	  @GetMapping("/save")
-	  public ResponseEntity<List<byte[]>> retrieveVideoFileForHomepage() throws IOException {
+	  public ResponseEntity<List<FileResource>> retrieveVideoFileForHomepage() throws IOException {
 		  List<GridFSDBFile> dbFileList = gridFsOperations.find(null);
-		  //List<InputStreamResource> inputStreamResources = new ArrayList<InputStreamResource>();
-		  List<byte[]> byteFiles = new ArrayList<byte[]>();
+		  List<FileResource> fileResource = new ArrayList<>();
+		  //List<InputStreamResource> inputStreamResources = new ArrayList<>();
+		  //List<byte[]> byteFiles = new ArrayList<byte[]>();
+		  int index = 0;
 		  for(GridFSDBFile dbFL: dbFileList )
 		  {
-			  byteFiles.add(IOUtils.toByteArray(dbFL.getInputStream()));
-			  //inputStreamResources.add(new InputStreamResource((dbFL.getInputStream())));
+			  FileResource fr = new FileResource(dbFL.getId().toString());
+			  fileResource.add(fr);
+			  //byteFiles.add(IOUtils.toByteArray(dbFL.getInputStream()));
+			  System.out.println(dbFL.getInputStream());
+			  //inputStreamResources.add(new InputStreamResource(dbFL.getInputStream()));
 		  }
-		  for(int i=0;i<byteFiles.size();i++)
-			  System.out.println(byteFiles.get(i));
-		  return new ResponseEntity<List<byte[]>>(byteFiles, HttpStatus.OK);
+		  //for(int i=0;i<inputStreamResources.size();i++)
+		//	  System.out.println(inputStreamResources.get(i));
+		  return new ResponseEntity<List<FileResource>>(fileResource, HttpStatus.OK);
 	  }
 	 
 }
