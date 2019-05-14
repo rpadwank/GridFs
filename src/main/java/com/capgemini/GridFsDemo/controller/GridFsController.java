@@ -45,11 +45,14 @@ public class GridFsController {
 	String fileId="";
 	
 	@PostMapping("/upload/{userName}")
-	public ResponseEntity<Video> saveFile(@RequestParam("filePath") MultipartFile file, @PathVariable String userName) throws IOException {
-		
+	public ResponseEntity<Video> saveFile(@RequestParam("filePath") MultipartFile file, @PathVariable String userName,@RequestParam("title") String title, @RequestParam("description") String description ,@RequestParam("category") String category) throws IOException {
+	
 		if(!file.isEmpty()) {
 			System.out.println(file.getInputStream());
 			System.out.println(userName);
+			System.out.println(title);
+			System.out.println(description);
+			System.out.println(category);
 			//System.out.println(userName.getName());
 		}
 		
@@ -57,8 +60,11 @@ public class GridFsController {
 		DBObject metaData = new BasicDBObject();
 		//System.out.println(video.getFileName());
 		//put organization in metadata
-		metaData.put("organization", "Fun video");
+		//metaData.put("organization", "Fun video");
 		metaData.put("userName", userName);
+		metaData.put("title", title);
+		metaData.put("description", description);
+		metaData.put("category", category);
 		//System.out.println("fp:"+video.getFp());
 		
 		  InputStream inputStream = file.getInputStream();
